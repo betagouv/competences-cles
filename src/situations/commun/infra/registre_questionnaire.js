@@ -11,7 +11,8 @@ export default class RegistreQuestionnaire extends BaseRegistre {
           questions.forEach((question) => {
             const questionStr = JSON.stringify(question);
             window.localStorage.setItem(`question_${question.id}`, questionStr);
-          })
+            this.recupereEtStockeIllustration(question);
+          });
           resolve(questions);
         },
         error: (xhr) => {
@@ -19,5 +20,31 @@ export default class RegistreQuestionnaire extends BaseRegistre {
         }
       });
     });
+  }
+
+  recupereEtStockeIllustration (question) {
+    if (question.illustration) {
+      this.recupereIllustrationEnBase64(question.illustration, function (base64) {
+        this.stockeIllustration(question.id, base64);
+      });
+    }
+  }
+
+  stockeIllustration (idQuestion, base64) {
+    window.localStorage[`question_illustration_${idQuestion}`] = base64;
+  }
+
+  recupereIllustrationEnBase64 (url, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+      var reader = new FileReader();
+      reader.onloadend = function () {
+        callback(reader.result);
+      };
+      reader.readAsDataURL(xhr.response);
+    };
+    xhr.open('GET', url);
+    xhr.responseType = 'blob';
+    xhr.send();
   }
 }
