@@ -10,7 +10,7 @@ export const DEMARRE = 'démarré';
 
 Vue.use(Vuex);
 
-export function creeStore (registreUtilisateur, registreCampagne, fetch = window.fetch) {
+export function creeStore (registreUtilisateur, registreCampagne, registreQuestionnaire, fetch = window.fetch) {
   const store = new Vuex.Store({
     state: {
       estConnecte: registreUtilisateur.estConnecte(),
@@ -76,6 +76,18 @@ export function creeStore (registreUtilisateur, registreCampagne, fetch = window
           registreCampagne.recupereCampagne(codeCampagne)
             .then((campagne) => {
               registreCampagne.assigneCampagneCourante(codeCampagne);
+              console.log('recupereQuestionnaires');
+              campagne.situations.forEach((situation) => {
+                console.log(situation);
+                const idQuestionnaire = situation.questionnaire_id;
+                if (idQuestionnaire) {
+                  registreQuestionnaire.recupereQuestionnaire(idQuestionnaire);
+                }
+                const idQuestionnaireEntrainement = situation.questionnaire_entrainement_id;
+                if (idQuestionnaireEntrainement) {
+                  registreQuestionnaire.recupereQuestionnaire(idQuestionnaireEntrainement);
+                }
+              });
               resolve(campagne);
             })
             .catch((erreur) => {

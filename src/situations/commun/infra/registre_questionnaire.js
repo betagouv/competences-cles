@@ -8,7 +8,9 @@ export default class RegistreQuestionnaire extends BaseRegistre {
         url: `${this.urlServeur}/api/questionnaires/${idQuestionnaire}`,
         contentType: 'application/json; charset=utf-8',
         success: (questions) => {
+          console.log('questions')
           questions.forEach((question) => {
+            console.log(question)
             const questionStr = JSON.stringify(question);
             window.localStorage.setItem(`question_${question.id}`, questionStr);
             this.recupereEtStockeIllustration(question);
@@ -24,13 +26,14 @@ export default class RegistreQuestionnaire extends BaseRegistre {
 
   recupereEtStockeIllustration (question) {
     if (question.illustration) {
-      this.recupereIllustrationEnBase64(question.illustration, function (base64) {
+      this.recupereIllustrationEnBase64(question.illustration, (base64) => {
         this.stockeIllustration(question.id, base64);
       });
     }
   }
 
   stockeIllustration (idQuestion, base64) {
+    console.log(`question_illustration_${idQuestion}`)
     window.localStorage[`question_illustration_${idQuestion}`] = base64;
   }
 
